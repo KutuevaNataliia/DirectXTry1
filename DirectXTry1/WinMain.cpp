@@ -11,26 +11,28 @@ int CALLBACK WinMain(
 	MSG msg;
 	BOOL gResult;
 	MyTimer timer;
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
-	//while(true)
+	while(true)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		// process all messages pending, but to not block for new messages
+		if (const auto ecode = Window::ProcessMessages())
+		{
+			// if return optional has value, means we're quitting so return exit code
+			return *ecode;
+		}
 
-		wnd.Gfx().ClearBuffer(0.5, 0.5, 0.5);
-		//wnd.Gfx().DrawTestTriangle(timer.Peek());
-		wnd.Gfx().DrawTestTriangle(
+		wnd.Gfx().ClearBuffer(0.1, 0.4, 0.7);
+		/*wnd.Gfx().DrawTestTriangle(
+			timer.Peek(),
+			wnd.mouse.GetPosX() / 150.0f - 1.0f,
+			-wnd.mouse.GetPosY() / 150.0f + 1.0f
+		);*/
+		wnd.Gfx().DrawTestCube(
 			timer.Peek(),
 			wnd.mouse.GetPosX() / 150.0f - 1.0f,
 			-wnd.mouse.GetPosY() / 150.0f + 1.0f
 		);
 		wnd.Gfx().EndFrame();
 	}
-	if (gResult == -1)
-	{
-		return -1;
-	}
-	return msg.wParam;
 	
 	return 0;
 }
